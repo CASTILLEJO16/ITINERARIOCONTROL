@@ -242,13 +242,13 @@ router.post('/:id/ventas', auth, async (req, res) => {
 });
 
 /* ===================================================
-   POST - /clients/:id/mensaje  -> guardar mensaje/observación + historial
-   body: { mensaje }
+   POST - /clients/:id/mensaje  -> guardar mensaje/observación + historial + imagen
+   body: { mensaje, imagen? }
    =================================================== */
 router.post('/:id/mensaje', auth, async (req, res) => {
   try {
     const { id } = req.params;
-    const { mensaje } = req.body;
+    const { mensaje, imagen } = req.body; // ✅ Agregar imagen
 
     if (!mensaje || mensaje.trim() === "") {
       return res.status(400).json({ msg: "Mensaje vacío" });
@@ -257,14 +257,24 @@ router.post('/:id/mensaje', auth, async (req, res) => {
     const client = await Client.findById(id);
     if (!client) return res.status(404).json({ msg: "Cliente no encontrado" });
 
-    // actualizar campo observaciones principal (opcional)
+    // Validar tamaño de imagen (máximo 5MB en base64)
+    if (imagen && imagen.length > 7000000) {
+      return res.status(400).json({ msg: "Imagen muy grande (máximo 5MB)" });
+    }
+
+    // Actualizar observaciones
     client.observaciones = mensaje;
 
+    // Agregar al historial
     client.historial.push({
       tipo: 'mensaje',
       mensaje,
+      imagen: imagen || null, // ✅ Guardar imagen
       fecha: new Date(),
-      usuario: { id: req.user.id, nombre: req.user.nombre || req.user.username }
+      usuario: { 
+        id: req.user.id, 
+        nombre: req.user.nombre || req.user.username 
+      }
     });
 
     await client.save();
@@ -274,5 +284,4 @@ router.post('/:id/mensaje', auth, async (req, res) => {
     res.status(500).json({ msg: "Error guardando mensaje" });
   }
 });
-
 module.exports = router;

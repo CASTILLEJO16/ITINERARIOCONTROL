@@ -13,6 +13,8 @@ import Clients from "./pages/Clients";
 import Analytics from "./pages/Analytics";
 import Settings from "./pages/Settings";
 import Historial from "./pages/HistoryPage";
+import MobileNavbar from "./components/MobileNavbar";
+
 
 export default function App() {
   const { token } = useContext(AppContext);
@@ -25,6 +27,7 @@ export default function App() {
           <Route path="*" element={<Navigate to="/login" />} />
           
         </Routes>
+        
       ) : (
         <div className="min-h-screen bg-slate-900 text-slate-100">
           <Sidebar />
@@ -42,10 +45,12 @@ export default function App() {
 
                 <Route path="*" element={<Navigate to="/dashboard" />} />
               </Routes>
+              
             </main>
           </div>
         </div>
       )}
+      <MobileNavbar />
     </BrowserRouter>
   );
 }

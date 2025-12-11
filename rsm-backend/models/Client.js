@@ -12,6 +12,7 @@ const HistorialSchema = new mongoose.Schema({
   monto: { type: Number, required: false },
   producto: { type: String, required: false },
   fecha: { type: Date, default: Date.now },
+   imagen: String,
   usuario: { // opcional: quién hizo la acción
     id: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: false },
     nombre: { type: String, required: false }

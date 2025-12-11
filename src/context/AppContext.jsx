@@ -101,20 +101,24 @@ export function AppProvider({ children }) {
     }
   };
 
-  // ✅ ENVIAR MENSAJE (función que faltaba)
-  const enviarMensaje = async (clienteId, mensaje) => {
-    try {
-      // 🔥 CAMBIAR de /observaciones a /mensaje (para coincidir con tu backend)
-      const res = await API.post(`/clients/${clienteId}/mensaje`, { mensaje });
-      setClients((p) => p.map(c => c._id === clienteId ? res.data : c));
-      showAlert("success", "Mensaje enviado correctamente");
-      return res.data;
-    } catch (error) {
-      console.error("Error enviando mensaje:", error);
-      showAlert("error", "Error al enviar mensaje");
-      throw error;
-    }
-  };
+ // Actualizar la función enviarMensaje
+const enviarMensaje = async (clienteId, data) => {
+  try {
+    // Aceptar tanto string como objeto
+    const payload = typeof data === 'string' 
+      ? { mensaje: data } 
+      : data;
+
+    const res = await API.post(`/clients/${clienteId}/mensaje`, payload);
+    setClients((p) => p.map(c => c._id === clienteId ? res.data : c));
+    showAlert("success", "Mensaje enviado correctamente");
+    return res.data;
+  } catch (error) {
+    console.error("Error enviando mensaje:", error);
+    showAlert("error", "Error al enviar mensaje");
+    throw error;
+  }
+};
 
   // ✅ PUEDES ELIMINAR O ACTUALIZAR agregarObservacion (opcional)
   // Si prefieres mantener ambas funciones, puedes dejar esta:
